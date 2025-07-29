@@ -6,7 +6,7 @@ CREATE_TABLE_task = """
 """
 
 INSERT_TASK = """
-    INSERT INTO tasks (task) VALEUS (?)
+    INSERT INTO tasks (task) VALUES (?)
 """
 
 SELECT_TASKS = "SELECT id, task FROM tasks"
