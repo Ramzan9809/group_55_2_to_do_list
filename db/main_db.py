@@ -19,14 +19,17 @@ def get_tasks():
     conn.close()
     return tasks
 
-def add_task(task):
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-    cursor.execute(queries.INSERT_TASK, (task,))
-    conn.commit()
-    task_id = cursor.lastrowid
-    conn.close()
-    return task_id
+def add_task(task, created_at):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO tasks (task, created_at, is_done) VALUES (?, ?, 0)",
+            (task, created_at)
+        )
+        conn.commit()
+        return cursor.lastrowid
+
+
 
 def update_task(task_id, new_task):
     conn = sqlite3.connect(db_path)
@@ -41,3 +44,12 @@ def delete_task(task_id):
     cursor.execute(queries.DELETE_TASK, (task_id,))
     conn.commit()
     conn.close()
+
+def update_status(task_id, is_done):
+    with sqlite3.connect(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE tasks SET is_done = ? WHERE id = ?",
+            (is_done, task_id)
+        )
+        conn.commit()
