@@ -11,30 +11,40 @@ def init_db():
     conn.commit()
     conn.close()
 
-def get_tasks():
+def get_tasks(filter_type="all"):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute(queries.SELECT_TASKS)
+
+    if filter_type == 'completed':
+        cursor.execute(queries.SELECT_TASKS_completed)
+    elif filter_type == 'uncompleted':
+        cursor.execute(queries.SELECT_TASKS_uncompleted)
+    else:
+        cursor.execute(queries.SELECT_TASKS)
+
     tasks = cursor.fetchall()
     conn.close()
     return tasks
 
-def add_task(task, created_at):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO tasks (task, created_at, is_done) VALUES (?, ?, 0)",
-            (task, created_at)
-        )
-        conn.commit()
-        return cursor.lastrowid
-
-
-
-def update_task(task_id, new_task):
+def add_task(task):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute(queries.UPDATE_TASK, (new_task, task_id))
+    cursor.execute(queries.INSERT_TASK, (task,))
+    conn.commit()
+    task_id = cursor.lastrowid
+    conn.close()
+    return task_id
+
+def update_task(task_id, new_task=None, completed=None):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    if new_task is not None:
+        cursor.execute(queries.UPDATE_TASK, (new_task, task_id))
+
+    if completed is not None:
+        cursor.execute("UPDATE tasks SET completed = ? WHERE id = ?", (completed, task_id))
+
     conn.commit()
     conn.close()
 
@@ -45,11 +55,9 @@ def delete_task(task_id):
     conn.commit()
     conn.close()
 
-def update_status(task_id, is_done):
-    with sqlite3.connect(db_path) as conn:
-        cursor = conn.cursor()
-        cursor.execute(
-            "UPDATE tasks SET is_done = ? WHERE id = ?",
-            (is_done, task_id)
-        )
-        conn.commit()
+def clear_completed():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM tasks WHERE completed = 1")
+    conn.commit()
+    conn.close()
