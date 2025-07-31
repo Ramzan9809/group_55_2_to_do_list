@@ -15,6 +15,7 @@ SELECT_TASKS_completed = "SELECT id, task, completed FROM tasks WHERE completed 
 
 SELECT_TASKS_uncompleted = "SELECT id, task, completed FROM tasks WHERE completed = 0"
 
+SELECT_TASKS_in_work = "SELECT id, task, completed FROM tasks WHERE completed = 0"
 
 UPDATE_TASK = "UPDATE tasks SET task = ? WHERE id = ?"
 

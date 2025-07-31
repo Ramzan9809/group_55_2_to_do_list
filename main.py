@@ -83,8 +83,19 @@ def main(page: ft.Page):
     clear_button = ft.IconButton(
         icon=ft.Icons.CLEANING_SERVICES_OUTLINED,
         tooltip="Удалить выполненные",
-        icon_color=ft.Colors.RED,
+        icon_color=ft.Colors.ORANGE,
         on_click=clear_completed_tasks
+    )
+
+    def clear_all_tasks(e):
+        main_db.clear_all()
+        load_task()
+
+    clear_all_button = ft.IconButton(
+        icon=ft.Icons.CLEANING_SERVICES_ROUNDED,
+        tooltip="Удалить все продукты",
+        icon_color=ft.Colors.RED,
+        on_click=clear_all_tasks
     )
 
     task_input = ft.TextField(label='Введите задачу')
@@ -95,7 +106,9 @@ def main(page: ft.Page):
             ft.ElevatedButton("Все", on_click=lambda e: set_filter('all')),
             ft.ElevatedButton("Выполненные", on_click=lambda e: set_filter('completed')),
             ft.ElevatedButton("Не выполненные", on_click=lambda e: set_filter('uncompleted')),
-            clear_button
+            ft.ElevatedButton("В работе", on_click=lambda e: set_filter('in_work')),
+            clear_button,
+            clear_all_button
         ], alignment=ft.MainAxisAlignment.SPACE_BETWEEN
     )
 

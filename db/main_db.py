@@ -19,6 +19,8 @@ def get_tasks(filter_type="all"):
         cursor.execute(queries.SELECT_TASKS_completed)
     elif filter_type == 'uncompleted':
         cursor.execute(queries.SELECT_TASKS_uncompleted)
+    elif filter_type == 'in_work':
+        cursor.execute(queries.SELECT_TASKS_in_work)
     else:
         cursor.execute(queries.SELECT_TASKS)
 
@@ -59,5 +61,12 @@ def clear_completed():
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM tasks WHERE completed = 1")
+    conn.commit()
+    conn.close()
+
+def clear_all():
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM tasks")
     conn.commit()
     conn.close()
